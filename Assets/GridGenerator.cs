@@ -10,37 +10,59 @@ public class GridGenerator : MonoBehaviour
         GenerateGrid();
     }
 
-void GenerateGrid()
-{
-    float tileWidth = 1f;  // Ajusta esto si tus parcelas tienen otro tamaño
-    float tileHeight = 1f; // Ajusta esto si tus parcelas tienen otro tamaño
-
-    // Centra la cuadrícula alrededor del origen
-    float offsetX = -(gridSize / 2f) * tileWidth;
-    float offsetY = -(gridSize / 2f) * tileHeight;
-
-    for (int x = 0; x < gridSize; x++)
+    void GenerateGrid()
     {
-        for (int y = 0; y < gridSize; y++)
+        float tileWidth = 1f;
+        float tileHeight = 1f;
+
+        float offsetX = -(gridSize / 2f) * tileWidth;
+        float offsetY = -(gridSize / 2f) * tileHeight;
+
+        Debug.Log("offsetX: " + offsetX);
+        Debug.Log("offsetY: " + offsetY);
+
+        for (int x = 0; x < gridSize; x++)
         {
-            // Instancia una parcela en la posición correcta
-            Vector3 position = new Vector3(offsetX + x * tileWidth, offsetY + y * tileHeight, 0);
-            GameObject parcel = Instantiate(parcelPrefab, position, Quaternion.identity);
-            parcel.name = "Parcel_" + x + "_" + y;
-
-            SpriteRenderer sr = parcel.GetComponent<SpriteRenderer>();
-            if (sr != null)
+            for (int y = 0; y < gridSize; y++)
             {
-                sr.color = Color.white;  // Asignar color blanco inicialmente
-            }
+                float parcel_x_position = offsetX + x * tileWidth;
+                float parcel_y_position = offsetY + y * tileHeight;
+                Vector3 position = new Vector3(parcel_x_position, parcel_y_position, 0);
+                Debug.Log("Parcel position: " + position);
+                GameObject parcel = Instantiate(parcelPrefab, position, Quaternion.identity);
+                parcel.name = "Parcel_" + x + "_" + y;
 
-            BoxCollider2D collider = parcel.GetComponent<BoxCollider2D>();
-            if (collider != null)
-            {
-                collider.size = new Vector2(tileWidth, tileHeight);  // Asegura que el collider tenga el tamaño correcto
+                AdjustParcelScale(parcel);
+
+                ChangeParcelColor(parcel, Color.white);
             }
         }
     }
-}
 
+    void AdjustParcelScale(GameObject parcel)
+    {
+        SpriteRenderer spriteRenderer = parcel.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            Vector2 spriteSize = spriteRenderer.bounds.size;
+
+            float scaleX = 1f / spriteSize.x;
+            float scaleY = 1f / spriteSize.y;
+
+            parcel.transform.localScale = new Vector3(scaleX, scaleY, 1f);
+        }
+    }
+
+    void ChangeParcelColor(GameObject parcel, Color color)
+    {
+        SpriteRenderer spriteRenderer = parcel.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = color;
+        }
+        else
+        {
+            Debug.LogWarning("No SpriteRenderer found on " + parcel.name);
+        }
+    }
 }
