@@ -7,6 +7,8 @@ public class ParcelInteraction : MonoBehaviour
     public Color defaultColor = Color.white;
     public Color hoverColor = Color.red;
 
+    public GameObject menuPanel;
+
     void AdjustScale()
     {
         Vector2 spriteSize = spriteRenderer.bounds.size;
@@ -49,6 +51,22 @@ public class ParcelInteraction : MonoBehaviour
     }
     void OnMouseDown()
     {
-        HideParcel();
+        Debug.Log("Parcela clicada: " + gameObject.name);
+        if (menuPanel != null)
+        {
+            menuPanel.SetActive(true);
+        }
+    }
+
+    public void Plant()
+    {
+        Debug.Log("Plantar en la parcela: " + gameObject.name);
+        menuPanel.SetActive(false);  // Cerrar el menú después de plantar
+    }
+
+    public void ExitParcel()
+    {
+        Debug.Log("Salir del menú de la parcela: " + gameObject.name);
+        menuPanel.SetActive(false);  // Cerrar el menú al salir
     }
 }
