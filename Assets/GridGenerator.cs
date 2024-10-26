@@ -3,7 +3,7 @@ using UnityEngine;
 public class GridGenerator : MonoBehaviour
 {
     public GameObject parcelPrefab;
-    public int gridSize = 3;
+    public int gridSize = 5;
 
     void Start()
     {

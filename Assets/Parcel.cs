@@ -99,8 +99,10 @@ public class ParcelInteraction : MonoBehaviour
     public void Plant()
     {
         Debug.Log("Planting on parcel: " + gameObject.name);
+        Debug.Log("Plant action called");
         currentState = ParcelState.Planted;
         UpdateParcelColor();
+        PlayerManager.Instance.AddFood(1);
     }
 
     // Método para cerrar el menú de esta parcela
