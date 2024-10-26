@@ -61,7 +61,7 @@ public class ParcelInteraction : MonoBehaviour
     public void Plant()
     {
         Debug.Log("Plantar en la parcela: " + gameObject.name);
-        menuPanel.SetActive(false);  // Cerrar el menú después de plantar
+        // menuPanel.SetActive(false);  // Cerrar el menú después de plantar
     }
 
     public void ExitParcel()

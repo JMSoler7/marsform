@@ -37,6 +37,8 @@ public class GridGenerator : MonoBehaviour
                 ChangeParcelColor(parcel, Color.white);
             }
         }
+
+        parcelPrefab.SetActive(false);
     }
 
     void AdjustParcelScale(GameObject parcel)
