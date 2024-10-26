@@ -6,8 +6,40 @@ public class ParcelInteraction : MonoBehaviour
 
     public Color defaultColor = Color.white;
     public Color hoverColor = Color.red;
+    public Color plantedColor = Color.blue;
+    public Color wateredColor = Color.green;
 
-    public GameObject menuPanel;
+    public enum ParcelState
+    {
+        Empty,
+        Planted,
+        Watered,
+        Harvested
+    }
+
+    public ParcelState currentState = ParcelState.Empty;
+    public GameObject menuControllerObject; // Objeto con el script del menú
+    private MenuController menuController;
+
+    void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        menuController = menuControllerObject.GetComponent<MenuController>();
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.color = defaultColor;
+        }
+
+        // Añade un BoxCollider2D si no existe
+        if (GetComponent<BoxCollider2D>() == null)
+        {
+            gameObject.AddComponent<BoxCollider2D>();
+        }
+
+        AdjustScale();
+        UpdateParcelColor();
+    }
 
     void AdjustScale()
     {
@@ -16,27 +48,32 @@ public class ParcelInteraction : MonoBehaviour
         float scaleY = 1f / spriteSize.y;
         transform.localScale = new Vector3(scaleX, scaleY, 1f);
     }
-    void HideParcel()
+
+    void UpdateParcelColor()
     {
-        spriteRenderer.enabled = false;
-    }
-    void Start()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
-            spriteRenderer.color = defaultColor;
+            switch (currentState)
+            {
+                case ParcelState.Empty:
+                    spriteRenderer.color = defaultColor;
+                    break;
+                case ParcelState.Planted:
+                    spriteRenderer.color = plantedColor;
+                    break;
+                case ParcelState.Watered:
+                    spriteRenderer.color = wateredColor;
+                    break;
+                case ParcelState.Harvested:
+                    spriteRenderer.color = Color.yellow; // ejemplo para cosechado
+                    break;
+            }
         }
-        if (GetComponent<BoxCollider2D>() == null)
-        {
-            gameObject.AddComponent<BoxCollider2D>();
-        }
-        AdjustScale();
     }
 
     void OnMouseEnter()
     {
-        if (spriteRenderer != null)
+        if (spriteRenderer != null && currentState == ParcelState.Empty)
         {
             spriteRenderer.color = hoverColor;
         }
@@ -44,29 +81,34 @@ public class ParcelInteraction : MonoBehaviour
 
     void OnMouseExit()
     {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = defaultColor;
-        }
+        UpdateParcelColor();  // Restaura el color dependiendo del estado actual
     }
+
     void OnMouseDown()
     {
         Debug.Log("Parcela clicada: " + gameObject.name);
-        if (menuPanel != null)
+
+        // Abrir menú desde el controlador y establecer esta parcela como seleccionada
+        if (menuController != null)
         {
-            menuPanel.SetActive(true);
+            menuController.OpenMenu(this);  // Llama al controlador de menú y pasa esta parcela como seleccionada
         }
     }
 
+    // Método para plantar en esta parcela
     public void Plant()
     {
-        Debug.Log("Plantar en la parcela: " + gameObject.name);
-        // menuPanel.SetActive(false);  // Cerrar el menú después de plantar
+        Debug.Log("Planting on parcel: " + gameObject.name);
+        currentState = ParcelState.Planted;
+        UpdateParcelColor();
     }
 
+    // Método para cerrar el menú de esta parcela
     public void ExitParcel()
     {
-        Debug.Log("Salir del menú de la parcela: " + gameObject.name);
-        menuPanel.SetActive(false);  // Cerrar el menú al salir
+        if (menuController != null)
+        {
+            menuController.CloseMenu();
+        }
     }
 }

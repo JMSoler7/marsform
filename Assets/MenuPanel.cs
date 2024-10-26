@@ -7,6 +7,7 @@ public class MenuController : MonoBehaviour
     public GameObject menuPanel;
     public Button plantarButton;
     public Button salirButton;
+    private ParcelInteraction selectedParcel;
 
     void Start()
     {
@@ -16,12 +17,29 @@ public class MenuController : MonoBehaviour
 
     void OnPlantarButtonClick()
     {
-        Debug.Log("Plantar seleccionado");
+        if (selectedParcel != null)
+        {
+            Debug.Log("Plantar seleccionado");
+            selectedParcel.Plant();  // Llama al método de la parcela seleccionada
+            selectedParcel.ExitParcel();
+        }
+    }
+
+    public void OpenMenu(ParcelInteraction parcel)
+    {
+        selectedParcel = parcel;
+        menuPanel.SetActive(true);
     }
 
     void OnSalirButtonClick()
     {
         Debug.Log("Salir seleccionado");
         // Application.Quit();
+    }
+
+    public void CloseMenu()
+    {
+        menuPanel.SetActive(false);
+        selectedParcel = null;  // Limpia la referencia a la parcela seleccionada
     }
 }
