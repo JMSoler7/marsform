@@ -5,6 +5,7 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
     public int food;
+    public static bool isMenuOpen = false;
 
     public TextMeshProUGUI foodCounterText;
 

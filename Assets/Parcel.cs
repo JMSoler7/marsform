@@ -12,6 +12,8 @@ public class ParcelInteraction : MonoBehaviour
     public enum ParcelState
     {
         Empty,
+        OccupiedNear,
+        OccupiedFar,
         Planted,
         Watered,
         Harvested
@@ -73,7 +75,7 @@ public class ParcelInteraction : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (spriteRenderer != null && currentState == ParcelState.Empty)
+        if (!PlayerManager.isMenuOpen && spriteRenderer != null && currentState == ParcelState.Empty)
         {
             spriteRenderer.color = hoverColor;
         }
@@ -81,17 +83,20 @@ public class ParcelInteraction : MonoBehaviour
 
     void OnMouseExit()
     {
-        UpdateParcelColor();  // Restaura el color dependiendo del estado actual
+        if (!PlayerManager.isMenuOpen)
+        {
+            UpdateParcelColor();
+        }
     }
 
     void OnMouseDown()
     {
-        Debug.Log("Parcela clicada: " + gameObject.name);
-
-        // Abrir menú desde el controlador y establecer esta parcela como seleccionada
-        if (menuController != null)
-        {
-            menuController.OpenMenu(this);  // Llama al controlador de menú y pasa esta parcela como seleccionada
+        if (!PlayerManager.isMenuOpen){
+            PlayerManager.isMenuOpen = true;
+            if (menuController != null)
+            {
+                menuController.OpenMenu(this);  // Llama al controlador de menú y pasa esta parcela como seleccionada
+            }
         }
     }
 
@@ -112,5 +117,6 @@ public class ParcelInteraction : MonoBehaviour
         {
             menuController.CloseMenu();
         }
+        PlayerManager.isMenuOpen = false;
     }
 }
