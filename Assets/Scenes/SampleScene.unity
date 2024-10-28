@@ -574,7 +574,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parcelPrefab: {fileID: 85724864}
-  gridSize: 3
+  gridSize: 25
 --- !u!4 &717643215
 Transform:
   m_ObjectHideFlags: 0
