@@ -8,18 +8,21 @@ public class ParcelInteraction : MonoBehaviour
     public Color hoverColor = Color.red;
     public Color plantedColor = Color.blue;
     public Color wateredColor = Color.green;
+    public Color conquerableColor = Color.yellow;
+    public Color unavailableColor = Color.white;
 
     public enum ParcelState
     {
         Empty,
-        OccupiedNear,
-        OccupiedFar,
+        Conquerable,
+        Unavailable,
         Planted,
         Watered,
         Harvested
     }
 
     public ParcelState currentState = ParcelState.Empty;
+    public Sprite emptySprite;
     public GameObject menuControllerObject; // Objeto con el script del menú
     private MenuController menuController;
 
@@ -51,7 +54,7 @@ public class ParcelInteraction : MonoBehaviour
         transform.localScale = new Vector3(scaleX, scaleY, 1f);
     }
 
-    void UpdateParcelColor()
+    public void UpdateParcelColor()
     {
         if (spriteRenderer != null)
         {
@@ -59,6 +62,10 @@ public class ParcelInteraction : MonoBehaviour
             {
                 case ParcelState.Empty:
                     spriteRenderer.color = defaultColor;
+                    if (emptySprite != null)
+                    {
+                        spriteRenderer.sprite = emptySprite;
+                    }
                     break;
                 case ParcelState.Planted:
                     spriteRenderer.color = plantedColor;
@@ -68,6 +75,12 @@ public class ParcelInteraction : MonoBehaviour
                     break;
                 case ParcelState.Harvested:
                     spriteRenderer.color = Color.yellow; // ejemplo para cosechado
+                    break;
+                case ParcelState.Conquerable:
+                    spriteRenderer.color = conquerableColor;
+                    break;
+                case ParcelState.Unavailable:
+                    spriteRenderer.color = unavailableColor;
                     break;
             }
         }

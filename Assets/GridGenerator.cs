@@ -3,7 +3,8 @@ using UnityEngine;
 public class GridGenerator : MonoBehaviour
 {
     public GameObject parcelPrefab;
-    public int gridSize = 25;
+    
+    public int gridSize = 10;
 
     void Start()
     {
@@ -21,6 +22,10 @@ public class GridGenerator : MonoBehaviour
         Debug.Log("offsetX: " + offsetX);
         Debug.Log("offsetY: " + offsetY);
 
+        int center = gridSize / 2;
+        int centerRangeStart = center - 1;
+        int centerRangeEnd = center + 1;
+
         for (int x = 0; x < gridSize; x++)
         {
             for (int y = 0; y < gridSize; y++)
@@ -31,10 +36,29 @@ public class GridGenerator : MonoBehaviour
                 Debug.Log("Parcel position: " + position);
                 GameObject parcel = Instantiate(parcelPrefab, position, Quaternion.identity);
                 parcel.name = "Parcel_" + x + "_" + y;
-
                 AdjustParcelScale(parcel);
 
-                ChangeParcelColor(parcel, Color.white);
+                ParcelInteraction parcelInteraction = parcel.GetComponent<ParcelInteraction>();
+                if (parcelInteraction != null)
+                {
+                    if (x >= centerRangeStart && x < centerRangeEnd && y >= centerRangeStart && y < centerRangeEnd)
+                    {
+                        // Parcela central vacía
+                        parcelInteraction.currentState = ParcelInteraction.ParcelState.Empty;
+                    }
+                    else if ((x == centerRangeStart - 1 || x == centerRangeEnd) && (y >= centerRangeStart - 1 && y <= centerRangeEnd) ||
+                            (y == centerRangeStart - 1 || y == centerRangeEnd) && (x >= centerRangeStart - 1 && x <= centerRangeEnd))
+                    {
+                        // Parcela colindante conquistable
+                        parcelInteraction.currentState = ParcelInteraction.ParcelState.Conquerable;
+                    }
+                    else
+                    {
+                        // Parcela no disponible
+                        parcelInteraction.currentState = ParcelInteraction.ParcelState.Unavailable;
+                    }
+                    parcelInteraction.UpdateParcelColor();  // Actualiza el color basado en el estado
+                }
             }
         }
 
