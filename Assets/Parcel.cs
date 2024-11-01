@@ -8,7 +8,6 @@ public class ParcelInteraction : MonoBehaviour
     public Color hoverColor = Color.red;
     public Color plantedColor = Color.blue;
     public Color wateredColor = Color.green;
-    public Color conquerableColor = Color.yellow;
     public Color unavailableColor = Color.white;
 
     public enum ParcelState
@@ -23,6 +22,7 @@ public class ParcelInteraction : MonoBehaviour
 
     public ParcelState currentState = ParcelState.Empty;
     public Sprite emptySprite;
+    public Sprite conquerableSprite;
     public GameObject menuControllerObject; // Objeto con el script del menú
     private MenuController menuController;
 
@@ -37,10 +37,14 @@ public class ParcelInteraction : MonoBehaviour
         }
 
         // Añade un BoxCollider2D si no existe
-        if (GetComponent<BoxCollider2D>() == null)
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        if (collider == null)
         {
-            gameObject.AddComponent<BoxCollider2D>();
+            collider = gameObject.AddComponent<BoxCollider2D>();
         }
+
+        // Asegúrate de que el collider se ajuste al tamaño del sprite
+        collider.size = spriteRenderer.bounds.size;
 
         AdjustScale();
         UpdateParcelColor();
@@ -77,7 +81,10 @@ public class ParcelInteraction : MonoBehaviour
                     spriteRenderer.color = Color.yellow; // ejemplo para cosechado
                     break;
                 case ParcelState.Conquerable:
-                    spriteRenderer.color = conquerableColor;
+                    if (conquerableSprite != null)
+                    {
+                        spriteRenderer.sprite = conquerableSprite;
+                    }
                     break;
                 case ParcelState.Unavailable:
                     spriteRenderer.color = unavailableColor;
