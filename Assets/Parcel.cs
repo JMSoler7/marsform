@@ -3,8 +3,6 @@ using UnityEngine;
 public class ParcelInteraction : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-
-    public Color defaultColor = Color.white;
     public Color hoverColor = Color.red;
     public Color plantedColor = Color.blue;
     public Color wateredColor = Color.green;
@@ -30,11 +28,6 @@ public class ParcelInteraction : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         menuController = menuControllerObject.GetComponent<MenuController>();
-
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = defaultColor;
-        }
 
         // Añade un BoxCollider2D si no existe
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
@@ -65,7 +58,7 @@ public class ParcelInteraction : MonoBehaviour
             switch (currentState)
             {
                 case ParcelState.Empty:
-                    spriteRenderer.color = defaultColor;
+                    spriteRenderer.color = Color.white;
                     if (emptySprite != null)
                     {
                         spriteRenderer.sprite = emptySprite;
@@ -81,6 +74,7 @@ public class ParcelInteraction : MonoBehaviour
                     spriteRenderer.color = Color.yellow; // ejemplo para cosechado
                     break;
                 case ParcelState.Conquerable:
+                    spriteRenderer.color = Color.white;
                     if (conquerableSprite != null)
                     {
                         spriteRenderer.sprite = conquerableSprite;
@@ -95,7 +89,11 @@ public class ParcelInteraction : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (!PlayerManager.isMenuOpen && spriteRenderer != null && currentState == ParcelState.Empty)
+        if (
+            !PlayerManager.isMenuOpen
+            && spriteRenderer != null
+            && (currentState == ParcelState.Empty || currentState == ParcelState.Conquerable)
+        )
         {
             spriteRenderer.color = hoverColor;
         }

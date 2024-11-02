@@ -140,7 +140,10 @@ MonoBehaviour:
   hoverColor: {r: 1, g: 0, b: 0, a: 1}
   plantedColor: {r: 0, g: 0, b: 1, a: 1}
   wateredColor: {r: 0, g: 1, b: 0, a: 1}
+  unavailableColor: {r: 1, g: 1, b: 1, a: 1}
   currentState: 0
+  emptySprite: {fileID: 4081739997680805929, guid: c198184809de4fb419c6a172f13f775e, type: 3}
+  conquerableSprite: {fileID: -3583569474791324824, guid: 822be30f78f48de4aae657ef847e59db, type: 3}
   menuControllerObject: {fileID: 1855175285}
 --- !u!1 &182145086
 GameObject:
@@ -574,7 +577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parcelPrefab: {fileID: 85724864}
-  gridSize: 25
+  gridSize: 10
 --- !u!4 &717643215
 Transform:
   m_ObjectHideFlags: 0
@@ -1772,10 +1775,18 @@ PrefabInstance:
     - target: {fileID: 3593812028226990855, guid: 80cdff883bc11a79e80f625a623ae3ab, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: 0}
+    - target: {fileID: 3593812028226990855, guid: 80cdff883bc11a79e80f625a623ae3ab, type: 3}
+      propertyPath: m_DrawMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3593812028226990855, guid: 80cdff883bc11a79e80f625a623ae3ab, type: 3}
+      propertyPath: m_SpriteTileMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3593812028226990855, guid: 80cdff883bc11a79e80f625a623ae3ab, type: 3}
       propertyPath: m_WasSpriteAssigned
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3744076814311549187, guid: 80cdff883bc11a79e80f625a623ae3ab, type: 3}
       propertyPath: m_LocalScale.x
