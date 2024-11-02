@@ -11,6 +11,9 @@ public class ParcelInteraction : MonoBehaviour
     public enum ParcelState
     {
         Empty,
+        Bank,
+        Garden,
+        Soldier,
         Conquerable,
         Unavailable,
         Planted,
@@ -21,6 +24,10 @@ public class ParcelInteraction : MonoBehaviour
     public ParcelState currentState = ParcelState.Empty;
     public Sprite emptySprite;
     public Sprite conquerableSprite;
+    public Sprite unavailableSprite;
+    public Sprite bankSprite;
+    public Sprite gardenSprite;
+    public Sprite soldierSprite;
     public GameObject menuControllerObject; // Objeto con el script del menú
     private MenuController menuController;
 
@@ -75,13 +82,11 @@ public class ParcelInteraction : MonoBehaviour
                     break;
                 case ParcelState.Conquerable:
                     spriteRenderer.color = Color.white;
-                    if (conquerableSprite != null)
-                    {
-                        spriteRenderer.sprite = conquerableSprite;
-                    }
+                    spriteRenderer.sprite = conquerableSprite;
                     break;
                 case ParcelState.Unavailable:
-                    spriteRenderer.color = unavailableColor;
+                    spriteRenderer.color = Color.white;
+                    spriteRenderer.sprite = unavailableSprite;
                     break;
             }
         }
