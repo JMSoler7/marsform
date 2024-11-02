@@ -5,22 +5,43 @@ using UnityEngine.UI;
 public class MenuController : MonoBehaviour
 {
     public GameObject menuPanel;
-    public Button plantarButton;
+    public Button setBankButton;
+    public Button setPatchButton;
+    public Button setSoldierButton;
     public Button salirButton;
     private ParcelInteraction selectedParcel;
 
     void Start()
     {
-        plantarButton.onClick.AddListener(OnPlantarButtonClick);
+        setBankButton.onClick.AddListener(OnSetBankButtonClick);
+        setPatchButton.onClick.AddListener(OnSetPatchButtonClick);
+        setSoldierButton.onClick.AddListener(OnSetSoldierButtonClick);
         salirButton.onClick.AddListener(OnSalirButtonClick);
     }
 
-    void OnPlantarButtonClick()
+    void OnSetBankButtonClick()
     {
         if (selectedParcel != null)
         {
-            Debug.Log("Plantar seleccionado");
-            selectedParcel.Plant();  // Llama al método de la parcela seleccionada
+            selectedParcel.Bank();
+            selectedParcel.ExitParcel();
+        }
+    }
+
+    void OnSetPatchButtonClick()
+    {
+        if (selectedParcel != null)
+        {
+            selectedParcel.Patch();
+            selectedParcel.ExitParcel();
+        }
+    }
+
+    void OnSetSoldierButtonClick()
+    {
+        if (selectedParcel != null)
+        {
+            selectedParcel.Soldier();
             selectedParcel.ExitParcel();
         }
     }

@@ -4,7 +4,6 @@ public class ParcelInteraction : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     public Color hoverColor = Color.red;
-    public Color plantedColor = Color.blue;
     public Color wateredColor = Color.green;
     public Color unavailableColor = Color.white;
 
@@ -12,7 +11,7 @@ public class ParcelInteraction : MonoBehaviour
     {
         Empty,
         Bank,
-        Garden,
+        Patch,
         Soldier,
         Conquerable,
         Unavailable,
@@ -26,7 +25,7 @@ public class ParcelInteraction : MonoBehaviour
     public Sprite conquerableSprite;
     public Sprite unavailableSprite;
     public Sprite bankSprite;
-    public Sprite gardenSprite;
+    public Sprite patchSprite;
     public Sprite soldierSprite;
     public GameObject menuControllerObject; // Objeto con el script del menú
     private MenuController menuController;
@@ -66,19 +65,25 @@ public class ParcelInteraction : MonoBehaviour
             {
                 case ParcelState.Empty:
                     spriteRenderer.color = Color.white;
-                    if (emptySprite != null)
-                    {
-                        spriteRenderer.sprite = emptySprite;
-                    }
+                    spriteRenderer.sprite = emptySprite;
                     break;
-                case ParcelState.Planted:
-                    spriteRenderer.color = plantedColor;
+                case ParcelState.Patch:
+                    spriteRenderer.color = Color.white;
+                    spriteRenderer.sprite = patchSprite;
+                    break;
+                case ParcelState.Bank:
+                    spriteRenderer.color = Color.white;
+                    spriteRenderer.sprite = bankSprite;
+                    break;
+                case ParcelState.Soldier:
+                    spriteRenderer.color = Color.white;
+                    spriteRenderer.sprite = soldierSprite;
                     break;
                 case ParcelState.Watered:
                     spriteRenderer.color = wateredColor;
                     break;
                 case ParcelState.Harvested:
-                    spriteRenderer.color = Color.yellow; // ejemplo para cosechado
+                    spriteRenderer.color = Color.yellow;
                     break;
                 case ParcelState.Conquerable:
                     spriteRenderer.color = Color.white;
@@ -123,14 +128,25 @@ public class ParcelInteraction : MonoBehaviour
         }
     }
 
-    // Método para plantar en esta parcela
-    public void Plant()
+    public void Bank()
     {
-        Debug.Log("Planting on parcel: " + gameObject.name);
-        Debug.Log("Plant action called");
-        currentState = ParcelState.Planted;
+        currentState = ParcelState.Bank;
         UpdateParcelColor();
-        PlayerManager.Instance.AddFood(1);
+        // PlayerManager.Instance.AddFood(1);
+    }
+
+    public void Patch()
+    {
+        currentState = ParcelState.Patch;
+        UpdateParcelColor();
+        // PlayerManager.Instance.AddFood(1);
+    }
+
+    public void Soldier()
+    {
+        currentState = ParcelState.Soldier;
+        UpdateParcelColor();
+        // PlayerManager.Instance.AddFood(1);
     }
 
     // Método para cerrar el menú de esta parcela
