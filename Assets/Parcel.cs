@@ -146,4 +146,10 @@ public class ParcelInteraction : MonoBehaviour
         }
         PlayerManager.isMenuOpen = false;
     }
+
+    public void Empty()
+    {
+        currentState = ParcelState.Empty;
+        UpdateParcelColor();
+    }
 }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class MenuController : MonoBehaviour
 {
     public GameObject menuPanel;
+    public Button setEmptyButton;
     public Button setBankButton;
     public Button setPatchButton;
     public Button setSoldierButton;
@@ -13,10 +14,20 @@ public class MenuController : MonoBehaviour
 
     void Start()
     {
+        setEmptyButton.onClick.AddListener(OnSetEmptyButtonClick);
         setBankButton.onClick.AddListener(OnSetBankButtonClick);
         setPatchButton.onClick.AddListener(OnSetPatchButtonClick);
         setSoldierButton.onClick.AddListener(OnSetSoldierButtonClick);
         salirButton.onClick.AddListener(OnSalirButtonClick);
+    }
+
+    void OnSetEmptyButtonClick()
+    {
+        if (selectedParcel != null)
+        {
+            selectedParcel.Empty();
+            selectedParcel.ExitParcel();
+        }
     }
 
     void OnSetBankButtonClick()
