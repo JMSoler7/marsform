@@ -4,7 +4,6 @@ public class ParcelInteraction : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     public Color hoverColor = Color.red;
-    public Color wateredColor = Color.green;
     public Color unavailableColor = Color.white;
 
     public enum ParcelState
@@ -14,10 +13,7 @@ public class ParcelInteraction : MonoBehaviour
         Patch,
         Soldier,
         Conquerable,
-        Unavailable,
-        Planted,
-        Watered,
-        Harvested
+        Unavailable
     }
 
     public ParcelState currentState = ParcelState.Empty;
@@ -79,12 +75,6 @@ public class ParcelInteraction : MonoBehaviour
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = soldierSprite;
                     break;
-                case ParcelState.Watered:
-                    spriteRenderer.color = wateredColor;
-                    break;
-                case ParcelState.Harvested:
-                    spriteRenderer.color = Color.yellow;
-                    break;
                 case ParcelState.Conquerable:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = conquerableSprite;
@@ -132,7 +122,6 @@ public class ParcelInteraction : MonoBehaviour
     {
         currentState = ParcelState.Bank;
         UpdateParcelColor();
-        // PlayerManager.Instance.AddFood(1);
     }
 
     public void Patch()
@@ -146,7 +135,6 @@ public class ParcelInteraction : MonoBehaviour
     {
         currentState = ParcelState.Soldier;
         UpdateParcelColor();
-        // PlayerManager.Instance.AddFood(1);
     }
 
     // Método para cerrar el menú de esta parcela
