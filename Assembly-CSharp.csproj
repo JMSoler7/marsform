@@ -68,6 +68,7 @@
     <Compile Include="Assets/Parcel.cs" />
     <Compile Include="Assets/GridGenerator.cs" />
     <Compile Include="Assets/MenuPanel.cs" />
+    <Compile Include="Assets/Zoom.cs" />
     <Compile Include="Assets/PlayerManager.cs" />
   </ItemGroup>
   <ItemGroup>
