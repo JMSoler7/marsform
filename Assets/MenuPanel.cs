@@ -62,7 +62,6 @@ public class MenuController : MonoBehaviour
         selectedParcel = parcel;
         menuPanel.SetActive(true);
     }
-
     void OnSalirButtonClick()
     {
         Debug.Log("Salir seleccionado");
