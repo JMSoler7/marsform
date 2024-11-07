@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Linq;
 
 public class ParcelInteraction : MonoBehaviour
 {
@@ -6,17 +7,7 @@ public class ParcelInteraction : MonoBehaviour
     public Color hoverColor = Color.red;
     public Color unavailableColor = Color.white;
 
-    public enum ParcelState
-    {
-        Empty,
-        Bank,
-        Patch,
-        Soldier,
-        Conquerable,
-        Unavailable
-    }
-
-    public ParcelState currentState = ParcelState.Empty;
+    public ParcelState currentParcelState;
     public Sprite emptySprite;
     public Sprite conquerableSprite;
     public Sprite unavailableSprite;
@@ -26,9 +17,21 @@ public class ParcelInteraction : MonoBehaviour
     public GameObject menuControllerObject; // Objeto con el script del menú
     private MenuController menuController;
 
+    public int x, y;
+
+    public GameState gameState;
+    public SaveManager saveManager;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        x = (int)transform.position.x; // Asumiendo que la posición X es la columna de la cuadrícula
+        y = (int)transform.position.y; // Asumiendo que la posición Y es la fila de la cuadrícula
+        if (gameState.parcels == null)
+        {
+            Debug.LogError("gameState.parcels is not initialized.");
+        }   
         menuController = menuControllerObject.GetComponent<MenuController>();
 
         // Añade un BoxCollider2D si no existe
@@ -41,13 +44,21 @@ public class ParcelInteraction : MonoBehaviour
         // Asegúrate de que el collider se ajuste al tamaño del sprite
         collider.size = spriteRenderer.bounds.size;
 
-        AdjustScale();
+        //AdjustScale();
         UpdateParcelColor();
     }
 
     void AdjustScale()
     {
         Vector2 spriteSize = spriteRenderer.bounds.size;
+        
+        // Verifica que el tamaño del sprite no sea cero para evitar divisiones por cero
+        if (spriteSize.x == 0 || spriteSize.y == 0)
+        {
+            Debug.LogError("El tamaño del sprite es cero en al menos una dimensión, no se puede ajustar la escala.");
+            return;
+        }
+
         float scaleX = 1f / spriteSize.x;
         float scaleY = 1f / spriteSize.y;
         transform.localScale = new Vector3(scaleX, scaleY, 1f);
@@ -57,29 +68,29 @@ public class ParcelInteraction : MonoBehaviour
     {
         if (spriteRenderer != null)
         {
-            switch (currentState)
+            switch (currentParcelState.state)
             {
-                case ParcelState.Empty:
+                case ParcelCondition.Empty:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = emptySprite;
                     break;
-                case ParcelState.Patch:
+                case ParcelCondition.Patch:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = patchSprite;
                     break;
-                case ParcelState.Bank:
+                case ParcelCondition.Bank:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = bankSprite;
                     break;
-                case ParcelState.Soldier:
+                case ParcelCondition.Soldier:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = soldierSprite;
                     break;
-                case ParcelState.Conquerable:
+                case ParcelCondition.Conquerable:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = conquerableSprite;
                     break;
-                case ParcelState.Unavailable:
+                case ParcelCondition.Unavailable:
                     spriteRenderer.color = Color.white;
                     spriteRenderer.sprite = unavailableSprite;
                     break;
@@ -92,7 +103,7 @@ public class ParcelInteraction : MonoBehaviour
         if (
             !PlayerManager.isMenuOpen
             && spriteRenderer != null
-            && (currentState == ParcelState.Empty || currentState == ParcelState.Conquerable)
+            && (currentParcelState.state == ParcelCondition.Empty || currentParcelState.state == ParcelCondition.Conquerable)
         )
         {
             spriteRenderer.color = hoverColor;
@@ -120,20 +131,57 @@ public class ParcelInteraction : MonoBehaviour
 
     public void Bank()
     {
-        currentState = ParcelState.Bank;
-        UpdateParcelColor();
+        // Verificar las coordenadas
+        Debug.Log("Attempting to bank at coordinates: " + x + ", " + y);
+
+        if (gameState.parcels == null)
+        {
+            Debug.LogError("gameState.parcels is null!");
+            return;
+        }
+
+        // Buscar la parcela con las coordenadas correctas
+        ParcelState parcelToUpdate = gameState.parcels.FirstOrDefault(parcel => parcel.x == x && parcel.y == y);
+
+        if (parcelToUpdate != null)
+        {
+            parcelToUpdate.state = ParcelCondition.Bank;
+            parcelToUpdate.x = x;
+            parcelToUpdate.y = y;
+
+            UpdateParcelColor();
+
+            Debug.Log("Banking parcel at " + x + ", " + y);
+            Debug.Log("Current parcel state: " + parcelToUpdate.state);
+
+            saveManager.SaveGame(gameState);
+        }
+        else
+        {
+            Debug.LogError("Parcel not found in gameState at (" + x + ", " + y + ")");
+
+            // Imprimir todas las celdas disponibles
+            Debug.Log("Listing all available parcels:");
+            foreach (var parcel in gameState.parcels)
+            {
+                Debug.Log($"Parcel at ({parcel.x}, {parcel.y}) with state: {parcel.state}");
+            }
+        }
     }
+
+
+
 
     public void Patch()
     {
-        currentState = ParcelState.Patch;
+        currentParcelState.state = ParcelCondition.Patch;
         UpdateParcelColor();
         // PlayerManager.Instance.AddFood(1);
     }
 
     public void Soldier()
     {
-        currentState = ParcelState.Soldier;
+        currentParcelState.state = ParcelCondition.Soldier;
         UpdateParcelColor();
     }
 
@@ -149,7 +197,7 @@ public class ParcelInteraction : MonoBehaviour
 
     public void Empty()
     {
-        currentState = ParcelState.Empty;
+        currentParcelState.state = ParcelCondition.Empty;
         UpdateParcelColor();
     }
 }
