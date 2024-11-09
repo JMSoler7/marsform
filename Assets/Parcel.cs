@@ -167,6 +167,8 @@ public class ParcelInteraction : MonoBehaviour
                 Debug.Log($"Parcel at ({parcel.x}, {parcel.y}) with state: {parcel.state}");
             }
         }
+        currentParcelState.state = ParcelCondition.Bank;
+        UpdateParcelColor();
     }
 
 

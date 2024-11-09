@@ -26,13 +26,12 @@ public class GridGenerator : MonoBehaviour
 
         if (gameState == null)
         {
-            gameState = new GameState();  // Crear una nueva instancia si es null
+            gameState = new GameState();
         }
 
-        // Verificar si gameState.parcels está correctamente inicializada
         if (gameState.parcels == null)
         {
-            gameState.parcels = new List<ParcelState>();  // Inicializar la lista de parcelas
+            gameState.parcels = new List<ParcelState>();
         }
 
         for (int x = 0; x < gridSize; x++)
@@ -49,7 +48,6 @@ public class GridGenerator : MonoBehaviour
                 ParcelInteraction parcelInteraction = parcel.GetComponent<ParcelInteraction>();
                 if (parcelInteraction != null)
                 {
-                    // Asignar valores de x y y a la parcela
                     parcelInteraction.x = x;
                     parcelInteraction.y = y;
 
@@ -60,14 +58,11 @@ public class GridGenerator : MonoBehaviour
                         state = DetermineParcelState(x, y, centerRangeStart, centerRangeEnd)
                     };
 
-                    // Actualizar el estado de la parcela en el script ParcelInteraction
                     parcelInteraction.currentParcelState = parcelState;
-
-                    // Añadir el estado de la parcela a la lista de gameState
                     gameState.parcels.Add(parcelState);
                     // Debug.Log($"Parcel added to gameState: ({x}, {y})");
                     parcelInteraction.gameState = gameState;
-                    parcelInteraction.UpdateParcelColor(); // Actualiza el color basado en el estado
+                    parcelInteraction.UpdateParcelColor();
                 }
             }
         }
