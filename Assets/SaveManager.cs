@@ -5,7 +5,23 @@ using System.IO;
 
 public class SaveManager : MonoBehaviour
 {
+    public static SaveManager Instance { get; private set; } // Singleton instance
+
     private string saveFilePath = "gameSave.json"; // Ruta del archivo donde se guardará el estado del juego
+
+    private void Awake()
+    {
+        // Singleton pattern
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Mantener SaveManager en todas las escenas
+        }
+        else
+        {
+            Destroy(gameObject); // Eliminar duplicados si ya existe una instancia
+        }
+    }
 
     // Guardar el estado del juego
     public void SaveGame(GameState gameState)
@@ -15,8 +31,8 @@ public class SaveManager : MonoBehaviour
             Debug.LogError("gameState is null!");
             return;
         }
-        string json = JsonUtility.ToJson(gameState, true); // Serializa a JSON (con formato legible)
-        File.WriteAllText(saveFilePath, json); // Escribe el JSON en el archivo
+        string json = JsonUtility.ToJson(gameState, true);
+        File.WriteAllText(saveFilePath, json);
         Debug.Log("Game saved!");
     }
 
@@ -25,41 +41,34 @@ public class SaveManager : MonoBehaviour
     {
         if (File.Exists(saveFilePath))
         {
-            string json = File.ReadAllText(saveFilePath); // Lee el archivo JSON
-            GameState gameState = JsonUtility.FromJson<GameState>(json); // Deserializa el JSON
+            string json = File.ReadAllText(saveFilePath);
+            GameState gameState = JsonUtility.FromJson<GameState>(json);
+            FindObjectOfType<GridGenerator>().GenerateGrid(load: true);
             Debug.Log("Game loaded!");
             return gameState;
         }
         else
         {
             Debug.Log("No save file found.");
-            return null; // Si no existe el archivo, retorna null
+            return null;
         }
     }
 
     public void SaveAllParcelStates()
     {
-        // Recoger todas las parcelas de la escena
         ParcelInteraction[] allParcels = FindObjectsOfType<ParcelInteraction>();
-
-        // Crear una lista para guardar el estado de las parcelas
         List<ParcelState> parcelStates = new List<ParcelState>();
 
-        // Recorrer todas las parcelas y añadir sus estados a la lista
         foreach (var parcel in allParcels)
         {
             if (parcel != null && parcel.currentParcelState != null)
             {
-                // Añadir el estado de cada parcela a la lista
                 parcelStates.Add(parcel.currentParcelState);
             }
         }
 
-        // Crear un objeto GameState y asignar la lista de parcelas
         GameState gameState = new GameState();
         gameState.parcels = parcelStates;
-
-        // Guardar el estado del juego (con las parcelas) en un archivo JSON
         SaveGame(gameState);
 
         Debug.Log("All parcels saved to JSON!");
@@ -67,36 +76,24 @@ public class SaveManager : MonoBehaviour
 
     public void LoadAllParcelStates()
     {
-        // Verificar si el archivo existe
         if (File.Exists(saveFilePath))
         {
-            // Leer el contenido del archivo JSON
-            string json = File.ReadAllText(saveFilePath); // Lee el archivo JSON
-
-            // Deserializar el JSON a un objeto GameState
-            GameState gameState = JsonUtility.FromJson<GameState>(json); // Deserializa el JSON
+            string json = File.ReadAllText(saveFilePath);
+            GameState gameState = JsonUtility.FromJson<GameState>(json);
             Debug.Log("Game loaded!");
 
-            // Comprobar si gameState y su lista de parcelas son válidas
             if (gameState != null && gameState.parcels != null)
             {
-                // Recoger todas las parcelas de la escena
                 ParcelInteraction[] allParcels = FindObjectsOfType<ParcelInteraction>();
 
-                // Recorrer todas las parcelas cargadas desde el archivo JSON
                 foreach (var parcelState in gameState.parcels)
                 {
-                    // Buscar la parcela correspondiente en la escena
                     ParcelInteraction parcel = allParcels.FirstOrDefault(p => p.x == parcelState.x && p.y == parcelState.y);
 
                     if (parcel != null)
                     {
-                        // Actualizar el estado de la parcela con el estado cargado desde JSON
                         parcel.currentParcelState = parcelState;
-
-                        // Actualizar el color de la parcela (puedes agregar este método si quieres)
                         parcel.UpdateParcelColor();
-
                         Debug.Log($"Loaded parcel at ({parcelState.x}, {parcelState.y}) with state: {parcelState.state}");
                     }
                     else

@@ -1,18 +1,21 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
+using System.Linq;
 
 public class GridGenerator : MonoBehaviour
 {
     public GameObject parcelPrefab;
     public GameState gameState;
     public int gridSize = 10;
+    private string saveFilePath = "gameSave.json";
 
     void Start()
     {
-        GenerateGrid();
+        // GenerateGrid();
     }
 
-    void GenerateGrid()
+    public void GenerateGrid(bool load = false)
     {
         float tileWidth = 1f;
         float tileHeight = 1f;
@@ -29,6 +32,17 @@ public class GridGenerator : MonoBehaviour
             gameState = new GameState();
         }
 
+        List<ParcelState> loadedParcels = null;
+
+        if (load && File.Exists(saveFilePath))
+        {
+            // Carga del archivo JSON si `load` es true
+            string json = File.ReadAllText(saveFilePath);
+            GameState loadedGameState = JsonUtility.FromJson<GameState>(json);
+            loadedParcels = loadedGameState?.parcels;
+            Debug.Log("Game loaded!");
+        }
+        
         if (gameState.parcels == null)
         {
             gameState.parcels = new List<ParcelState>();
@@ -51,16 +65,32 @@ public class GridGenerator : MonoBehaviour
                     parcelInteraction.x = x;
                     parcelInteraction.y = y;
 
-                    ParcelState parcelState = new ParcelState
+                    ParcelState parcelState;
+
+                    if (load && loadedParcels != null)
                     {
-                        x = x,
-                        y = y,
-                        state = DetermineParcelState(x, y, centerRangeStart, centerRangeEnd)
-                    };
+                        // Busca el estado en la lista cargada si `load` es true
+                        parcelState = loadedParcels.FirstOrDefault(p => p.x == x && p.y == y);
+
+                        if (parcelState == null)
+                        {
+                            // Si no hay estado guardado para esta parcela, crea uno nuevo
+                            parcelState = new ParcelState { x = x, y = y, state = DetermineParcelState(x, y, centerRangeStart, centerRangeEnd) };
+                            Debug.LogWarning($"No saved state found for parcel at ({x}, {y}). Using default state.");
+                        }
+                        else
+                        {
+                            Debug.Log($"Loaded state for parcel at ({x}, {y}) with state: {parcelState.state}");
+                        }
+                    }
+                    else
+                    {
+                        // Crea un nuevo estado para una nueva partida
+                        parcelState = new ParcelState { x = x, y = y, state = DetermineParcelState(x, y, centerRangeStart, centerRangeEnd) };
+                    }
 
                     parcelInteraction.currentParcelState = parcelState;
                     gameState.parcels.Add(parcelState);
-                    // Debug.Log($"Parcel added to gameState: ({x}, {y})");
                     parcelInteraction.gameState = gameState;
                     parcelInteraction.UpdateParcelColor();
                 }
